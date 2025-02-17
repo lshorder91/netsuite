@@ -195,7 +195,7 @@ function sqlResultsTableGenerate(records) {
         //log.debug('Processing Record:', JSON.stringify(record));
 
         // Construct the Netsuite URL for the Bill's transaction
-        var netsuiteUrl = `https://5577788-sb1.app.netsuite.com/app/accounting/transactions/vendbill.nl?id=${record.id}&whence=`;
+        var netsuiteUrl = `https://NETSUITEID.app.netsuite.com/app/accounting/transactions/vendbill.nl?id=${record.id}&whence=`; //if you are using default Netsuite URL schema, replace the "NETSUITEID" text with your Netsuite account ID
 
         // Use the properties from the record to populate the <td> elements
         tbody += `
