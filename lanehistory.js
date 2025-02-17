@@ -128,6 +128,7 @@ function sqlQueryRun(context) {
         v.companyName,
         vb.trandate,
         l.fullName,
+        vb.approvalstatus,
         vb.custbody_destcity_vb, --custom field, replace when using in your Netsuite environment
         vb.custbody_deststate_vb, --custom field, replace when using in your Netsuite environment
         c.name,
@@ -147,6 +148,7 @@ function sqlQueryRun(context) {
         AND tl.location = ?
         AND vb.custbody_destcity_vb = ?
         AND vb.custbody_deststate_vb = ?
+        AND vb.approvalstatus = 2
         AND ( vb.trandate >= TO_DATE( BUILTIN.RELATIVE_RANGES( 'OY', 'START' ), 'mm/dd/yyyy' ) )
         AND ( vb.trandate <= TO_DATE( BUILTIN.RELATIVE_RANGES( 'OY', 'END' ), 'mm/dd/yyyy' ) )
     ORDER BY
@@ -192,10 +194,10 @@ function sqlResultsTableGenerate(records) {
         var record = records[r];
 
         // Log each record to see the structure
-        //log.debug('Processing Record:', JSON.stringify(record));
+        log.debug('Processing Record:', JSON.stringify(record));
 
         // Construct the Netsuite URL for the Bill's transaction
-        var netsuiteUrl = `https://NETSUITEID.app.netsuite.com/app/accounting/transactions/vendbill.nl?id=${record.id}&whence=`; //if you are using default Netsuite URL schema, replace the "NETSUITEID" text with your Netsuite account ID
+        var netsuiteUrl = `https://5577788-sb1.app.netsuite.com/app/accounting/transactions/vendbill.nl?id=${record.id}&whence=`; //if you are using default Netsuite URL schema, replace the "NETSUITEID" text with your Netsuite account ID
 
         // Use the properties from the record to populate the <td> elements
         tbody += `
@@ -287,11 +289,18 @@ function sqlResultsTableGenerate(records) {
     </div>
 
     <script>
-
-        window.jQuery = window.$ = jQuery;
-
-        $('#sqlResultsTable').DataTable({ "pageLength": 10, "lengthMenu": [10, 25, 50, 75, 100], "order": [1, 'desc'] });
-
-    </script>
+    window.jQuery = window.$ = jQuery;
+    $('#sqlResultsTable').DataTable({
+        "pageLength": 10,
+        "lengthMenu": [10, 25, 50, 75, 100],
+        "order": [[1, 'desc']],  // Sort by the 2nd column (Date), descending
+        "columnDefs": [
+            { 
+                "targets": 1,  // The second column (Date)
+                "type": "date"  // Use the 'date' type sorting
+            }
+        ]
+    });
+</script>
 `;
 }
